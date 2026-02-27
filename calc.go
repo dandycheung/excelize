@@ -1541,6 +1541,9 @@ func parseRef(ref string) (cellRef, bool, bool, error) {
 			return cr, true, false, nil
 		}
 		if cr.Row, rowErr = strconv.Atoi(cell); rowErr == nil { // cast to row
+			if cr.Row < 1 || cr.Row > TotalRows {
+				return cr, false, false, err
+			}
 			return cr, false, true, nil
 		}
 		return cr, false, false, err
@@ -1777,7 +1780,7 @@ func (f *File) rangeResolver(ctx *calcContext, cellRefs, cellRanges *list.List) 
 
 		for row := valueRange[0]; row <= valueRange[1]; row++ {
 			colMax := 0
-			if row <= len(ws.SheetData.Row) {
+			if 0 < row && row <= len(ws.SheetData.Row) {
 				rowData := &ws.SheetData.Row[row-1]
 				colMax = min(valueRange[3], len(rowData.C))
 			}
